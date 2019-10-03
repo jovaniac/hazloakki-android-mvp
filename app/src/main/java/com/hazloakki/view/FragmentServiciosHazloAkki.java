@@ -42,25 +42,25 @@ public class FragmentServiciosHazloAkki extends Fragment {
 
             tabLayout.setupWithViewPager(viewPager);
         }
-
-
         return view;
     }
 
     private void insertarTabs(ViewGroup container) {
         View padre = (View) container.getParent();
-        appBarLayout = (AppBarLayout) padre.findViewById(R.id.appbar);
+        //appBarLayout = (AppBarLayout) padre.findViewById(R.id.appbar);
 
         tabLayout = new TabLayout(getActivity());
         tabLayout.setTabTextColors(Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF"));
-        appBarLayout.addView(tabLayout);
+        //appBarLayout.addView(tabLayout);
     }
 
     private void poblarViewPager(ViewPager viewPager) {
         AdaptadorSecciones adapter = new AdaptadorSecciones(getFragmentManager());
 
         adapter.addFragment(new Fragment(),"Categorias");
-
+        adapter.addFragment(new Fragment(),"Categorias 2");
+        adapter.addFragment(new Fragment(),"Categorias 3 ");
+        adapter.addFragment(new Fragment(),"Categorias 4");
         viewPager.setAdapter(adapter);
     }
 
@@ -78,7 +78,7 @@ public class FragmentServiciosHazloAkki extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        appBarLayout.removeView(tabLayout);
+       // appBarLayout.removeView(tabLayout);
     }
 
     /**
