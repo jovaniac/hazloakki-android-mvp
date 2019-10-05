@@ -18,8 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
-import com.hazloakki.view.BlankFragment;
-import com.hazloakki.view.FragmentServiciosHazloAkki;
+import com.hazloakki.view.TabsHomePrincipalFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (id == R.id.nav_home) {
-            fragmentoGenerico= new BlankFragment();
+            fragmentoGenerico= new TabsHomePrincipalFragment();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
