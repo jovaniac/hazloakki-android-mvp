@@ -8,31 +8,37 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+
 import com.hazloakki.R;
 import com.hazloakki.adaptadores.Adapter;
+import com.hazloakki.modelos.AccionesDto;
 import com.hazloakki.modelos.FoodItem;
 import com.hazloakki.modelos.Footer;
 import com.hazloakki.modelos.Header;
 import com.hazloakki.modelos.RecyclerViewItem;
+import com.hazloakki.network.ConexionServicios;
+import com.hazloakki.network.ConstantesServicios;
 import com.hazloakki.utils.RecyclerItemClickListener;
 import com.hazloakki.utils.Space;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AccionesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AccionesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AccionesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,6 +51,8 @@ public class AccionesFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     RecyclerView recyclerView;
+    private String TAG = AccionesFragment.class.getSimpleName();
+    private Adapter adaptadorAcciones = null;
 
     public AccionesFragment() {
         // Required empty public constructor
@@ -84,11 +92,10 @@ public class AccionesFragment extends Fragment {
         View view =  inflater.inflate(R.layout.activity_main_recycler, container, false);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
-        //setSupportActionBar(toolbar);
-        //init RecyclerView
+        //setSupportActionBar(toolbar);  
         initRecyclerView(view);
         seleccionarAccion();
-
+        sendRequest();
        return view;
     }
 
@@ -171,7 +178,6 @@ public class AccionesFragment extends Fragment {
         return recyclerViewItems;
     }
 
-
     public void seleccionarAccion() {
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
@@ -181,5 +187,50 @@ public class AccionesFragment extends Fragment {
                     }
                 })
         );
+    }
+
+    public void sendRequest() {
+        JsonArrayRequest req = new JsonArrayRequest(ConstantesServicios.URL_ACCIONES,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+                        adaptadorAcciones = new Adapter(getContext(), jsonAcciones(response));
+                        recyclerView.setAdapter(adaptadorAcciones);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Toast.makeText(getActivity().getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ConexionServicios.getInstance(getActivity().getApplicationContext()).getRequestQueue().add(req);
+    }
+
+    public List<AccionesDto> jsonAcciones(JSONArray response) {
+        List<AccionesDto> listaDeAcciones = new ArrayList<AccionesDto>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+
+                JSONObject acciones = (JSONObject) response.get(i);
+
+                AccionesDto accionesDto = new AccionesDto();
+                accionesDto.setIdAccion(acciones.getString("idAccion"));
+                accionesDto.setNombre(acciones.getString("nombre"));
+                accionesDto.setDescripcion(acciones.getString("descripcion"));
+                accionesDto.setEstatus(acciones.getBoolean("estatus"));
+
+                listaDeAcciones.add(accionesDto);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "Error: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+        return listaDeAcciones;
     }
 }

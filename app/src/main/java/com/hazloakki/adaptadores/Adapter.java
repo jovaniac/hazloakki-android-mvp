@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hazloakki.modelos.AccionesDto;
 import com.hazloakki.modelos.FoodItem;
 import com.hazloakki.modelos.Footer;
 import com.hazloakki.modelos.Header;
@@ -27,12 +28,17 @@ public class Adapter extends RecyclerView.Adapter {
     ////Food Item Type
     private static final int FOOD_ITEM = 2;
     Context mContext;
+    private List<AccionesDto> listaAcciones;
 
     public Adapter(List<RecyclerViewItem> recyclerViewItems, Context mContext) {
         this.recyclerViewItems = recyclerViewItems;
         this.mContext = mContext;
     }
 
+    public Adapter(Context mCtx, List<AccionesDto> listaAcciones) {
+        this.mContext = mCtx;
+        this.listaAcciones = listaAcciones;
+    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
