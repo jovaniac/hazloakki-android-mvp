@@ -4,14 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hazloakki.R;
+import com.hazloakki.adaptadores.Adapter;
+import com.hazloakki.modelos.FoodItem;
+import com.hazloakki.modelos.Footer;
+import com.hazloakki.modelos.Header;
+import com.hazloakki.modelos.RecyclerViewItem;
+import com.hazloakki.utils.RecyclerItemClickListener;
+import com.hazloakki.utils.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +44,7 @@ public class AccionesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    RecyclerView recyclerView;
 
     public AccionesFragment() {
         // Required empty public constructor
@@ -70,13 +80,16 @@ public class AccionesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //init RecyclerView
-        initRecyclerView();
 
-        return inflater.inflate(R.layout.fragment_acciones, container, false);
+        View view =  inflater.inflate(R.layout.activity_main_recycler, container, false);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+
+        //setSupportActionBar(toolbar);
+        //init RecyclerView
+        initRecyclerView(view);
+        seleccionarAccion();
+
+       return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -107,20 +120,18 @@ public class AccionesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void initRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    private void initRecyclerView(View view ) {
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //add space item decoration and pass space you want to give
         recyclerView.addItemDecoration(new Space(20));
         //finally set adapter
-        recyclerView.setAdapter(new Adapter(createDummyList(), this));
-
-
+        recyclerView.setAdapter(new Adapter(createDummyList(), getContext()));
     }
     //Method to create dummy data
     private List<RecyclerViewItem> createDummyList() {
         List<RecyclerViewItem> recyclerViewItems = new ArrayList<>();
-        Header header = new Header("Welcome To Food Express", "Non-Veg Menu",
+        Header header = new Header("Hola Jovani!! ¿Qué necesitas en estos momentos!!?", "HazloAkki",
                 "https://cdn.pixabay.com/photo/2017/09/30/15/10/pizza-2802332_640.jpg");
         //add header
         recyclerViewItems.add(header);
@@ -130,14 +141,21 @@ public class AccionesFragment extends Fragment {
                 "https://cdn.pixabay.com/photo/2017/03/30/08/10/chicken-intestine-2187505_640.jpg",
                 "https://cdn.pixabay.com/photo/2017/02/15/15/17/meal-2069021_640.jpg",
                 "https://cdn.pixabay.com/photo/2017/06/01/07/15/food-2362678_640.jpg"};
-        String[] titles = {"5 in 1 Chicken Zinger Box",
-                "Paneer Butter Masala",
-                "Chicken Lollipop Masala", "Paneer Manchurian", "Non-Veg. Lemon & Coriander Soup"};
-        String[] descriptions = {"Chicken zinger+hot wings [2 pieces]+veg strip [1 piece]+Pillsbury cookie cake+Pepsi [can]",
-                "A spicy North Indian dish made from cottage cheese, cream, butter and select spices",
-                "Chicken wings coated with batter of flour",
-                "Deep-fried cottage cheese balls sautéed with ginger", "Meat shreds, lime juice and coriander"};
-        String[] price = {"₹220", "₹530", "₹400", "₹790", "₹150"};
+
+        String[] titles = {
+                "Comer",
+                "Beber",
+                "Bailar",
+                "Descanzar",
+                "Divertirse"
+        };
+
+        String[] descriptions = {"Encuentra cualquier tipo de lugar para comer",
+                "Todos los lugares donde puedes encontrar tu cerveza favorito o un buen vino",
+                "Te gusta el karaoke? o simplementa quiere bailar",
+                "Encuentra los mejores lugares para descanzar",
+                "Aburrido? aqui los mejores lugares, encuentra lo que buscas"};
+        String[] price = {"10", "300", "500", "1500", "4"};
 
         boolean[] isHot = {true, false, true, true, false};
         for (int i = 0; i < imageUrls.length; i++) {
@@ -146,12 +164,22 @@ public class AccionesFragment extends Fragment {
             recyclerViewItems.add(foodItem);
         }
 
-        Footer footer = new Footer("Your diet is a bank account. Good food choices are good investments.",
-                "Bethenny Frankel", "https://cdn.pixabay.com/photo/2016/12/26/17/28/background-1932466_640.jpg");
+        Footer footer = new Footer("Ofertas para decir SI!!",
+                "Dale antes de que se acabe!!", "https://cdn.pixabay.com/photo/2016/12/26/17/28/background-1932466_640.jpg");
         //add footer
         recyclerViewItems.add(footer);
         return recyclerViewItems;
     }
 
 
+    public void seleccionarAccion() {
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+                        Toast.makeText(getActivity(),"Seleccionando una accion", Toast.LENGTH_LONG).show();
+                    }
+                })
+        );
+    }
 }
