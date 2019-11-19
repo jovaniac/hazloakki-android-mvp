@@ -6,11 +6,11 @@ package com.hazloakki.modelos;
 
 public class AccionesDto {
 
-
     private String idAccion;
     private String nombre;
     private String descripcion;
     private boolean estatus;
+    private String urlImagen;
 
     public String getIdAccion() {
         return idAccion;
@@ -44,13 +44,11 @@ public class AccionesDto {
         this.estatus = estatus;
     }
 
-    @Override
-    public String toString() {
-        return "AccionesDto{" +
-                "idAccion='" + idAccion + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", estatus=" + estatus +
-                '}';
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
     }
 }

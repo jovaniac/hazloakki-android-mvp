@@ -1,10 +1,8 @@
 package com.hazloakki.view;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +21,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.hazloakki.R;
 import com.hazloakki.adaptadores.Adapter;
 import com.hazloakki.modelos.AccionesDto;
-import com.hazloakki.modelos.FoodItem;
+import com.hazloakki.modelos.AccionesItem;
 import com.hazloakki.modelos.Footer;
 import com.hazloakki.modelos.Header;
 import com.hazloakki.modelos.RecyclerViewItem;
@@ -92,11 +90,19 @@ public class AccionesFragment extends Fragment {
         View view =  inflater.inflate(R.layout.activity_main_recycler, container, false);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
-        //setSupportActionBar(toolbar);  
-        initRecyclerView(view);
+        //setSupportActionBar(toolbar);
+        initView(view);
         seleccionarAccion();
-        sendRequest();
+        //dataDummyRecyclerView(view);
+        getAcciones();
        return view;
+    }
+
+    public void initView(View view ){
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //add space item decoration and pass space you want to give
+        recyclerView.addItemDecoration(new Space(20));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -127,11 +133,7 @@ public class AccionesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void initRecyclerView(View view ) {
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //add space item decoration and pass space you want to give
-        recyclerView.addItemDecoration(new Space(20));
+    private void dataDummyRecyclerView(View view ) {
         //finally set adapter
         recyclerView.setAdapter(new Adapter(createDummyList(), getContext()));
     }
@@ -166,9 +168,9 @@ public class AccionesFragment extends Fragment {
 
         boolean[] isHot = {true, false, true, true, false};
         for (int i = 0; i < imageUrls.length; i++) {
-            FoodItem foodItem = new FoodItem(titles[i], descriptions[i], imageUrls[i], price[i],isHot[i]);
+            AccionesItem accionesItem = new AccionesItem(null,titles[i], descriptions[i], imageUrls[i]);
             //add food items
-            recyclerViewItems.add(foodItem);
+            recyclerViewItems.add(accionesItem);
         }
 
         Footer footer = new Footer("Ofertas para decir SI!!",
@@ -178,30 +180,59 @@ public class AccionesFragment extends Fragment {
         return recyclerViewItems;
     }
 
+    public List<RecyclerViewItem> viewCategoriasDetalle(JSONArray response){
+
+        List<RecyclerViewItem> recyclerViewItems = new ArrayList<>();
+
+        Toast.makeText(getActivity(),"Datos API: "+ response.toString(), Toast.LENGTH_LONG).show();
+
+        List<AccionesDto> listAcciones = jsonAcciones(response);
+
+        /*
+        Header
+         */
+        Header header = new Header("Hola Jovani!! ¿Qué necesitas en estos momentos!!?", "HazloAkki",
+                "https://cdn.pixabay.com/photo/2017/09/30/15/10/pizza-2802332_640.jpg");
+        recyclerViewItems.add(header);
+
+        String[] imageUrls = {"https://cdn.pixabay.com/photo/2016/11/18/17/42/barbecue-1836053_640.jpg"
+        };
+
+        boolean[] isHot = {true, false, true, true, false};
+        for (int i = 0; i < listAcciones.size(); i++) {
+            AccionesDto accionesDto = listAcciones.get(i);
+            AccionesItem accionesItem = new AccionesItem(accionesDto.getIdAccion(),accionesDto.getNombre(), accionesDto.getDescripcion(), accionesDto.getUrlImagen());
+            //add food items
+            recyclerViewItems.add(accionesItem);
+        }
+        return recyclerViewItems;
+    }
+
     public void seleccionarAccion() {
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, int position) {
-                        Toast.makeText(getActivity(),"Seleccionando una accion", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Accion Id: "+position, Toast.LENGTH_LONG).show();
                     }
                 })
         );
     }
 
-    public void sendRequest() {
+    public void getAcciones() {
+
         JsonArrayRequest req = new JsonArrayRequest(ConstantesServicios.URL_ACCIONES,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
-                        adaptadorAcciones = new Adapter(getContext(), jsonAcciones(response));
-                        recyclerView.setAdapter(adaptadorAcciones);
+                        List<RecyclerViewItem> datosAdaptador =  viewCategoriasDetalle(response);
+                        recyclerView.setAdapter(new Adapter(datosAdaptador, getContext()));
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.d(TAG, "Error Conexion" + error.getMessage());
                 Toast.makeText(getActivity().getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -216,13 +247,11 @@ public class AccionesFragment extends Fragment {
             for (int i = 0; i < response.length(); i++) {
 
                 JSONObject acciones = (JSONObject) response.get(i);
-
                 AccionesDto accionesDto = new AccionesDto();
                 accionesDto.setIdAccion(acciones.getString("idAccion"));
                 accionesDto.setNombre(acciones.getString("nombre"));
                 accionesDto.setDescripcion(acciones.getString("descripcion"));
                 accionesDto.setEstatus(acciones.getBoolean("estatus"));
-
                 listaDeAcciones.add(accionesDto);
             }
         } catch (JSONException e) {

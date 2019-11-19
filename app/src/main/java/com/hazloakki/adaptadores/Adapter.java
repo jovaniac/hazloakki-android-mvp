@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hazloakki.modelos.AccionesDto;
-import com.hazloakki.modelos.FoodItem;
+import com.hazloakki.modelos.AccionesItem;
 import com.hazloakki.modelos.Footer;
 import com.hazloakki.modelos.Header;
 import com.hazloakki.modelos.RecyclerViewItem;
@@ -80,14 +80,14 @@ public class Adapter extends RecyclerView.Adapter {
 
         } else if (holder instanceof FoodItemHolder) {
             FoodItemHolder foodItemHolder = (FoodItemHolder) holder;
-            FoodItem foodItem = (FoodItem) recyclerViewItem;
+            AccionesItem accionesItem = (AccionesItem) recyclerViewItem;
             //set data
-            foodItemHolder.texViewFoodTitle.setText(foodItem.getTitle());
-            foodItemHolder.texViewDescription.setText(foodItem.getDescription());
-           // foodItemHolder.textViewPrice.setText(foodItem.getPrice());
-            Glide.with(mContext).load(foodItem.getImageUrl()).into(foodItemHolder.imageViewFood);
+            foodItemHolder.texViewFoodTitle.setText(accionesItem.getTitulo());
+            foodItemHolder.texViewDescription.setText(accionesItem.getDescripcion());
+           // foodItemHolder.textViewPrice.setText(accionesItem.getPrice());
+            Glide.with(mContext).load(accionesItem.getUrlImagen()).into(foodItemHolder.imageViewFood);
             //check food item is hot or not to set visibility of hot text on image
-           /* if (foodItem.isHot())
+           /* if (accionesItem.isHot())
                 foodItemHolder.textViewIsHot.setVisibility(View.VISIBLE);
             else
                 foodItemHolder.textViewIsHot.setVisibility(View.GONE);
@@ -108,8 +108,8 @@ public class Adapter extends RecyclerView.Adapter {
             //if its Footer then return Footer item
         else if (recyclerViewItem instanceof Footer)
             return FOOTER_ITEM;
-        //if its FoodItem then return Food item
-        else if (recyclerViewItem instanceof FoodItem)
+        //if its AccionesItem then return Food item
+        else if (recyclerViewItem instanceof AccionesItem)
             return FOOD_ITEM;
         else
             return super.getItemViewType(position);
