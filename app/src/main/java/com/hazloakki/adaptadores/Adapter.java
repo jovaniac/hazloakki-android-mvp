@@ -158,4 +158,8 @@ public class Adapter extends RecyclerView.Adapter {
             imageViewFooter = itemView.findViewById(R.id.imageViewFooter);
         }
     }
+
+    public List<AccionesDto> getItems() {
+        return listaAcciones;
+    }
 }

@@ -3,6 +3,7 @@ package com.hazloakki.view;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -214,6 +215,25 @@ public class AccionesFragment extends Fragment {
                     @Override
                     public void onItemClick(View v, int position) {
                         Toast.makeText(getActivity(),"Accion Id: "+position, Toast.LENGTH_LONG).show();
+
+                        Fragment fragmentoGenerico = null;
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                        Bundle bundle=new Bundle();
+                        bundle.putString("idAccion", adaptadorAcciones.getItems().get(position).getIdAccion());
+                        bundle.putString("latitud", "19.3277");
+                        bundle.putString("longitud", "-99.1517");
+                        bundle.putInt("distancia", 1);
+                        bundle.putBoolean("estatus", true);
+
+                        fragmentoGenerico = new FragmentoNegocioDetalle();
+                        fragmentoGenerico.setArguments(bundle);
+
+                        if (fragmentoGenerico != null) {
+                            fragmentManager.beginTransaction().replace(R.id.contenedor_principal, fragmentoGenerico).commit();
+                        }
+
+
                     }
                 })
         );
