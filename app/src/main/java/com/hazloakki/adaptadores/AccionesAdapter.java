@@ -18,7 +18,7 @@ import com.hazloakki.R;
 import java.util.List;
 
 
-public class Adapter extends RecyclerView.Adapter {
+public class AccionesAdapter extends RecyclerView.Adapter {
     //Declare List of Recyclerview Items
     List<RecyclerViewItem> recyclerViewItems;
     //Header Item Type
@@ -27,18 +27,15 @@ public class Adapter extends RecyclerView.Adapter {
     private static final int FOOTER_ITEM = 1;
     ////Food Item Type
     private static final int FOOD_ITEM = 2;
-    Context mContext;
+    private Context mContext;
     private List<AccionesDto> listaAcciones;
 
-    public Adapter(List<RecyclerViewItem> recyclerViewItems, Context mContext) {
+    public AccionesAdapter(List<RecyclerViewItem> recyclerViewItems, Context mContext,List<AccionesDto> listaAcciones) {
         this.recyclerViewItems = recyclerViewItems;
         this.mContext = mContext;
-    }
-
-    public Adapter(Context mCtx, List<AccionesDto> listaAcciones) {
-        this.mContext = mCtx;
         this.listaAcciones = listaAcciones;
     }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -161,5 +158,9 @@ public class Adapter extends RecyclerView.Adapter {
 
     public List<AccionesDto> getItems() {
         return listaAcciones;
+    }
+
+    public void setListaAcciones(List<AccionesDto> listaAcciones) {
+        this.listaAcciones = listaAcciones;
     }
 }

@@ -1,6 +1,6 @@
 package com.hazloakki.modelos;
 
-//Object of food item
+
 public class AccionesItem extends RecyclerViewItem {
     private String idAccion;
     private String titulo;

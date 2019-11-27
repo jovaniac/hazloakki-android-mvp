@@ -1,9 +1,5 @@
 package com.hazloakki.modelos;
 
-/**
- * Created by amary on 25-03-2018.
- */
-//Object of Header item
 public class Header extends RecyclerViewItem{
     private String HeaderText;
     private String Category;

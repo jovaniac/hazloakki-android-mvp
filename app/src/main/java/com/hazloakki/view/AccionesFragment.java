@@ -20,7 +20,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 
 import com.hazloakki.R;
-import com.hazloakki.adaptadores.Adapter;
+import com.hazloakki.adaptadores.AccionesAdapter;
 import com.hazloakki.modelos.AccionesDto;
 import com.hazloakki.modelos.AccionesItem;
 import com.hazloakki.modelos.Footer;
@@ -51,7 +51,7 @@ public class AccionesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     RecyclerView recyclerView;
     private String TAG = AccionesFragment.class.getSimpleName();
-    private Adapter adaptadorAcciones = null;
+    private AccionesAdapter adaptadorAcciones = null;
 
     public AccionesFragment() {
         // Required empty public constructor
@@ -136,7 +136,7 @@ public class AccionesFragment extends Fragment {
 
     private void dataDummyRecyclerView(View view ) {
         //finally set adapter
-        recyclerView.setAdapter(new Adapter(createDummyList(), getContext()));
+        recyclerView.setAdapter(new AccionesAdapter(createDummyList(), getContext(),null));
     }
     //Method to create dummy data
     private List<RecyclerViewItem> createDummyList() {
@@ -199,11 +199,10 @@ public class AccionesFragment extends Fragment {
         String[] imageUrls = {"https://cdn.pixabay.com/photo/2016/11/18/17/42/barbecue-1836053_640.jpg"
         };
 
-        boolean[] isHot = {true, false, true, true, false};
         for (int i = 0; i < listAcciones.size(); i++) {
             AccionesDto accionesDto = listAcciones.get(i);
             AccionesItem accionesItem = new AccionesItem(accionesDto.getIdAccion(),accionesDto.getNombre(), accionesDto.getDescripcion(), accionesDto.getUrlImagen());
-            //add food items
+
             recyclerViewItems.add(accionesItem);
         }
         return recyclerViewItems;
@@ -221,19 +220,17 @@ public class AccionesFragment extends Fragment {
 
                         Bundle bundle=new Bundle();
                         bundle.putString("idAccion", adaptadorAcciones.getItems().get(position).getIdAccion());
-                        bundle.putString("latitud", "19.3277");
-                        bundle.putString("longitud", "-99.1517");
+                        bundle.putString("latitud", "193277");
+                        bundle.putString("longitud", "991517");
                         bundle.putInt("distancia", 1);
                         bundle.putBoolean("estatus", true);
 
-                        fragmentoGenerico = new FragmentoNegocioDetalle();
+                        fragmentoGenerico = new NegociosFragmento();
                         fragmentoGenerico.setArguments(bundle);
 
                         if (fragmentoGenerico != null) {
-                            fragmentManager.beginTransaction().replace(R.id.contenedor_principal, fragmentoGenerico).commit();
+                            fragmentManager.beginTransaction().replace(R.id.contenedor_tabs_principal, fragmentoGenerico).commit();
                         }
-
-
                     }
                 })
         );
@@ -247,7 +244,8 @@ public class AccionesFragment extends Fragment {
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
                         List<RecyclerViewItem> datosAdaptador =  viewCategoriasDetalle(response);
-                        recyclerView.setAdapter(new Adapter(datosAdaptador, getContext()));
+                        adaptadorAcciones = new AccionesAdapter(datosAdaptador, getContext(),jsonAcciones(response));
+                        recyclerView.setAdapter(adaptadorAcciones);
                     }
                 }, new Response.ErrorListener() {
             @Override
