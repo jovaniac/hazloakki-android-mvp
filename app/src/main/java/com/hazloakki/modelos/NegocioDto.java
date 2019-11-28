@@ -42,6 +42,8 @@ public class NegocioDto {
 	private String ultimoComentario;
 	private String nombreCategoria;
 	private String horarioDia;
+	private String urlImagenProfile;
+
 
 	public String getIdNegocio() {
 		return idNegocio;
@@ -341,5 +343,13 @@ public class NegocioDto {
 
 	public void setHorarioDia(String horarioDia) {
 		this.horarioDia = horarioDia;
+	}
+
+	public String getUrlImagenProfile() {
+		return urlImagenProfile;
+	}
+
+	public void setUrlImagenProfile(String urlImagenProfile) {
+		this.urlImagenProfile = urlImagenProfile;
 	}
 }

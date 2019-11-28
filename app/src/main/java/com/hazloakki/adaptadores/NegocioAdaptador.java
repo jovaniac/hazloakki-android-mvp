@@ -5,18 +5,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hazloakki.modelos.NegocioDto;
 import com.hazloakki.R;
 import java.util.List;
 
 
 public class NegocioAdaptador extends RecyclerView.Adapter<NegocioAdaptador.ViewHolder> {
+
     private final Context contexto;
     private List<NegocioDto> listaNegocios;
     private OnItemClickListener escucha;
-
 
     public interface OnItemClickListener {
         public void onClick(ViewHolder holder, String idAlquiler);
@@ -34,11 +36,13 @@ public class NegocioAdaptador extends RecyclerView.Adapter<NegocioAdaptador.View
         public TextView viewNumOfertas;
         public TextView viewUltimoComentario;
         public TextView viewDescripcion;
+        public ImageView imagenNegocio;
 
 
         public ViewHolder(View v) {
             super(v);
             viewNombreNegocio = (TextView) v.findViewById(R.id.nombreNegocio);
+            imagenNegocio = itemView.findViewById(R.id.imagenNegocio);
             viewCalificacion = (TextView) v.findViewById(R.id.calificacion);
             viewCategoria = (TextView) v.findViewById(R.id.categoria);
             viewDistancia = (TextView) v.findViewById(R.id.distancia);
@@ -87,7 +91,12 @@ public class NegocioAdaptador extends RecyclerView.Adapter<NegocioAdaptador.View
 
         String s;
 
-        // Asignación UI
+        /*
+        Asignacion de datos al front
+         */
+        s = listaNegocios.get(position).getUrlImagenProfile();
+        Glide.with(contexto).load(s).into(holder.imagenNegocio);
+
         s = listaNegocios.get(position).getNombre();
         holder.viewNombreNegocio.setText(s);
 

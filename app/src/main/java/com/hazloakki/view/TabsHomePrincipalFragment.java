@@ -16,17 +16,8 @@ import com.hazloakki.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TabsHomePrincipalFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TabsHomePrincipalFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TabsHomePrincipalFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -35,13 +26,11 @@ public class TabsHomePrincipalFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private ViewPager mViewPager;
+    private ViewPager paginador;
 
     public TabsHomePrincipalFragment() {
-        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static TabsHomePrincipalFragment newInstance(String param1, String param2) {
         TabsHomePrincipalFragment fragment = new TabsHomePrincipalFragment();
         Bundle args = new Bundle();
@@ -59,28 +48,23 @@ public class TabsHomePrincipalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_main_all, container, false);
+        View view = inflater.inflate(R.layout.paginador_home, container, false);
 
         // Setear adaptador al viewpager.
-        mViewPager = (ViewPager) view.findViewById(R.id.pager);
-        setupViewPager(mViewPager);
+        paginador = (ViewPager) view.findViewById(R.id.pager);
+        initPaginador(paginador);
 
         // Preparar las pestañas
         TabLayout tabs = (TabLayout) view.findViewById(R.id.tabs);
-
-        tabs.setupWithViewPager(mViewPager);
+        tabs.setupWithViewPager(paginador);
 
         return view;
     }
 
-    /**
-     * Crea una instancia del view pager con los datos
-     * predeterminados
-     *
-     * @param viewPager Nueva instancia
+    /*
+    Creamos paginador con 2 fragments - Categorias y Ofertas
      */
-    private void setupViewPager(ViewPager viewPager) {
+    private void initPaginador(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getFragmentManager());
         adapter.addFragment(new AccionesFragment(), "CATEGORIAS");
         adapter.addFragment(new Fragment(), "OFERTAS");
@@ -93,8 +77,6 @@ public class TabsHomePrincipalFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-
     @Override
     public void onDetach() {
         super.onDetach();

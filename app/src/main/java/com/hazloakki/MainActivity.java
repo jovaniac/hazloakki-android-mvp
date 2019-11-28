@@ -27,6 +27,8 @@ import org.json.JSONArray;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,24 +37,37 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        /*
+        DrawerLayout necesario para poder hospedar un NavigationView
+         */
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        /*
+        Opcion de menu, para NavigationView
+         */
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
-        onNavigationItemSelected(navigationView.getMenu().getItem(0));
+
+        if (navigationView != null) {
+            prepararDrawer(navigationView);
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        }
+    }
+
+    private void prepararDrawer(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        menuItem.setChecked(true);
+                        onNavigationItemSelected(menuItem);
+                        drawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+
     }
 
     @Override
@@ -96,25 +111,23 @@ public class MainActivity extends AppCompatActivity
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (id == R.id.nav_home) {
-            fragmentoGenerico= new TabsHomePrincipalFragment();
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id) {
+            case R.id.nav_home:
+                fragmentoGenerico= new TabsHomePrincipalFragment();
+                break;
+            case R.id.nav_slideshow:
+                break;
+            case R.id.nav_tools:
+                break;
+            case R.id.nav_share:
+                break;
+            case R.id.nav_send:
+                break;
         }
-        /*DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;*/
         try {
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.contenedor_tabs_principal, fragmentoGenerico).addToBackStack(null).commit();
+            if(fragmentoGenerico != null){                                                                  //addToBackStack(null)
+                fragmentManager.beginTransaction().replace(R.id.contenedor_tabs_principal, fragmentoGenerico).commit();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

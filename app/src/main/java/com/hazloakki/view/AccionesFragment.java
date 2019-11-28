@@ -39,8 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccionesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -49,23 +47,13 @@ public class AccionesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private String TAG = AccionesFragment.class.getSimpleName();
     private AccionesAdapter adaptadorAcciones = null;
 
     public AccionesFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccionesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AccionesFragment newInstance(String param1, String param2) {
         AccionesFragment fragment = new AccionesFragment();
         Bundle args = new Bundle();
@@ -88,22 +76,16 @@ public class AccionesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.activity_main_recycler, container, false);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        View view =  inflater.inflate(R.layout.fragment_recyclerview_acciones, container, false);
+            recyclerView = view.findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            //add space item decoration and pass space you want to give
+            recyclerView.addItemDecoration(new Space(20));
 
-        //setSupportActionBar(toolbar);
-        initView(view);
         seleccionarAccion();
         //dataDummyRecyclerView(view);
-        getAcciones();
+        obtenerAcciones();
        return view;
-    }
-
-    public void initView(View view ){
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //add space item decoration and pass space you want to give
-        recyclerView.addItemDecoration(new Space(20));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -185,7 +167,7 @@ public class AccionesFragment extends Fragment {
 
         List<RecyclerViewItem> recyclerViewItems = new ArrayList<>();
 
-        Toast.makeText(getActivity(),"Datos API: "+ response.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(),"Datos API: "+ response.toString(), Toast.LENGTH_LONG).show();
 
         List<AccionesDto> listAcciones = jsonAcciones(response);
 
@@ -229,14 +211,14 @@ public class AccionesFragment extends Fragment {
                         fragmentoGenerico.setArguments(bundle);
 
                         if (fragmentoGenerico != null) {
-                            fragmentManager.beginTransaction().replace(R.id.contenedor_tabs_principal, fragmentoGenerico).commit();
+                            fragmentManager.beginTransaction().replace(R.id.contenedor_tabs_principal, fragmentoGenerico).addToBackStack(null).commit();
                         }
                     }
                 })
         );
     }
 
-    public void getAcciones() {
+    public void obtenerAcciones() {
 
         JsonArrayRequest req = new JsonArrayRequest(ConstantesServicios.URL_ACCIONES,
                 new Response.Listener<JSONArray>() {
@@ -270,6 +252,7 @@ public class AccionesFragment extends Fragment {
                 accionesDto.setNombre(acciones.getString("nombre"));
                 accionesDto.setDescripcion(acciones.getString("descripcion"));
                 accionesDto.setEstatus(acciones.getBoolean("estatus"));
+                accionesDto.setUrlImagen(acciones.getString("urlImagen"));
                 listaDeAcciones.add(accionesDto);
             }
         } catch (JSONException e) {

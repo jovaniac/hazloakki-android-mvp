@@ -15,7 +15,7 @@
 
         <!-- Media -->
         <ImageView
-            android:id="@+id/foto"
+            android:id="@+id/imagenNegocio"
             android:layout_width="match_parent"
             android:layout_height="@dimen/altura_imagen_item" />
 

@@ -7,7 +7,7 @@
     android:id="@+id/recyclerView"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.hazloakki.MainActivity"
-    tools:showIn="@layout/activity_main_recycler">
+    tools:showIn="@layout/fragment_recyclerview_acciones">
 
 
 </android.support.v7.widget.RecyclerView>

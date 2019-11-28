@@ -41,7 +41,7 @@ import java.util.Map;
 
 public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnItemClickListener{
 
-
+    private Map<String, String> parametrosConsulta = new HashMap<String, String>();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -51,59 +51,50 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView listaUI;
+    private RecyclerView recyclerViewListaNegocios;
     private LinearLayoutManager linearLayoutManager;
     private NegocioAdaptador negocioAdaptador;
     private static String TAG = NegociosFragmento.class.getSimpleName();
-    private static Context ctx;
+    private Context ctx = getContext();
 
     public NegociosFragmento() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            parametrosConsulta.put("idAccion", String.valueOf(getArguments().getString("idAccion")));
+            parametrosConsulta.put("latitud", String.valueOf(getArguments().getString("latitud")));
+            parametrosConsulta.put("longitud", String.valueOf(getArguments().getString("longitud")));
+            parametrosConsulta.put("distancia", String.valueOf(getArguments().getInt("distancia")));
+            parametrosConsulta.put("estatus", String.valueOf(getArguments().getBoolean("estatus")));
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_negocios, container, false);
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Filtro...", Snackbar.LENGTH_LONG)
-                        .setAction("Acción", null).show();
-            }
-        });
-
-        negocioAdaptador = new NegocioAdaptador(getContext(), this);
-        // Preparar lista
-        listaUI = (RecyclerView) view.findViewById(R.id.lista);
-        listaUI.setHasFixedSize(true);
-
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        listaUI.setLayoutManager(linearLayoutManager);
-
-        ctx = getContext();
-        initNegocios();
+            initAdaptador(view);
+            obtenerNegocios();
         return view;
     }
 
+    public void initAdaptador( View view ){
+        negocioAdaptador = new NegocioAdaptador(getContext(), this);
+        recyclerViewListaNegocios = (RecyclerView) view.findViewById(R.id.recyclerViewNegociosLista);
+        recyclerViewListaNegocios.setHasFixedSize(true);
 
-    public void initNegocios(){
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewListaNegocios.setLayoutManager(linearLayoutManager);
+
+    }
+
+    public void obtenerNegocios(){
 
         try {
-            Gson gson = new Gson();
-            Map<String, String> params = new HashMap<String, String>();
-
-            params.put("idAccion", String.valueOf(getArguments().getString("idAccion")));
-            params.put("latitud", String.valueOf(getArguments().getString("latitud")));
-            params.put("longitud", String.valueOf(getArguments().getString("longitud")));
-            params.put("distancia", String.valueOf(getArguments().getInt("distancia")));
-            params.put("estatus", String.valueOf(getArguments().getBoolean("estatus")));
-
-            sendRequestJsonPost(ConstantesServicios.URL_NEGOCIOS,params);
-
+            sendRequestJsonPost(ConstantesServicios.URL_NEGOCIOS,parametrosConsulta);
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error al procesar la peticion: " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -139,7 +130,7 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
                         @Override
                         public void onResponse(JSONArray response) {
                             negocioAdaptador.setListaNegocios(parseJsonNegocio(response));
-                            listaUI.setAdapter(negocioAdaptador);
+                            recyclerViewListaNegocios.setAdapter(negocioAdaptador);
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -171,12 +162,9 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
             };
 
             ConexionServicios.getInstance(getContext()).getRequestQueue().add(request);
-
         }catch(Exception e){
             e.printStackTrace();
             Toast.makeText(getContext(), "Upps algo inesperado sucedio, vuelve a intentarlo: " + e.getMessage(), Toast.LENGTH_SHORT).show();        }
-
-
     }
 
     public List<NegocioDto> parseJsonNegocio(JSONArray response){
@@ -189,9 +177,9 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
 
                 NegocioDto negocioDto = new NegocioDto();
                 negocioDto.setIdNegocio(negocio.getString("idNegocio"));
-               // negocioDto.setNombre(negocio.getString("nombre"));
+                negocioDto.setNombre(negocio.getString("nombre"));
                 negocioDto.setDescripcion(negocio.getString("descripcion"));
-                //negocioDto.setEstatus(negocio.getBoolean("estatus"));
+                negocioDto.setEstatus(negocio.getBoolean("estatus"));
                 negocioDto.setDomicilio(negocio.getString("domicilio"));
                 negocioDto.setSitioWeb(negocio.getString("sitioWeb"));
                 negocioDto.setCategoria(negocio.getString("nombreCategoria"));
@@ -199,6 +187,7 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
                 negocioDto.setDistancia(negocio.getString("distancia"));
                 negocioDto.setNumeroOfertas(negocio.getInt("numeroOfertas"));
                 negocioDto.setHorario(negocio.getString("horarioDia"));
+                negocioDto.setUrlImagenProfile(negocio.getString("urlImagenProfile"));
 
                 listNegocio.add(negocioDto);
             }
@@ -248,14 +237,6 @@ public class NegociosFragmento extends Fragment implements NegocioAdaptador.OnIt
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
